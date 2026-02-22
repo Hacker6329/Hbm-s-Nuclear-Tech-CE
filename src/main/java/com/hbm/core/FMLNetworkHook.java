@@ -39,13 +39,23 @@ public final class FMLNetworkHook {
             Object o = U.getReference(sp, SP_DATA_OFF);
             if (o != null) {
                 U.putReference(sp, SP_DATA_OFF, null);
-                ((ByteBuf) o).release();
+                ByteBuf buf = (ByteBuf) o;
+                if (buf.refCnt() > 0) {
+                    buf.release();
+                } else {
+                    System.err.println("[HBM:FMLNetworkHook.releaseCustomPayloadData] Attempted to release SPacketCustomPayload buffer with refCnt=0, channel=" + U.getReference(sp, SP_CHAN_OFF));
+                }
             }
         } else if (pkt instanceof CPacketCustomPayload cp) {
             Object o = U.getReference(cp, CP_DATA_OFF);
             if (o != null) {
                 U.putReference(cp, CP_DATA_OFF, null);
-                ((ByteBuf) o).release();
+                ByteBuf buf = (ByteBuf) o;
+                if (buf.refCnt() > 0) {
+                    buf.release();
+                } else {
+                    System.err.println("[HBM:FMLNetworkHook.releaseCustomPayloadData] Attempted to release CPacketCustomPayload buffer with refCnt=0, channel=" + U.getReference(cp, CP_CHAN_OFF));
+                }
             }
         }
     }
@@ -80,6 +90,13 @@ public final class FMLNetworkHook {
             final Side side = (Side) U.getReference(self, SIDE_OFF);
 
             if (side == Side.CLIENT) { // Client -> Server
+                if (payload.refCnt() == 0) {
+                    System.err.println("[HBM:FMLNetworkHook.networkDispatcherWrite] Dropping CLIENT->SERVER packet with refCnt=0:\n" +
+                            "  Channel: " + pkt.channel() + "\n" +
+                            "  Packet class: " + pkt.getClass().getName()
+                    );
+                    return;
+                }
                 PacketBuffer pb = new PacketBuffer(payload.retainedSlice());
                 CPacketCustomPayload out;
 
@@ -98,6 +115,13 @@ public final class FMLNetworkHook {
 
             } else { // Server -> Client
                 if (local) {
+                    if (payload.refCnt() == 0) {
+                        System.err.println("[HBM:FMLNetworkHook.networkDispatcherWrite] Dropping SERVER->CLIENT packet with refCnt=0:\n" +
+                                "  Channel: " + pkt.channel() + "\n" +
+                                "  Packet class: " + pkt.getClass().getName()
+                        );
+                        return;
+                    }
                     PacketBuffer pb = new PacketBuffer(payload.retainedSlice());
                     SPacketCustomPayload out = createUncheckedSPacket(pkt.channel(), pb);
                     final ChannelFuture f = ctx.write(out, promise);
@@ -127,12 +151,27 @@ public final class FMLNetworkHook {
             // retaining them, or b) routed their packets through vanilla that reuses packet instances, or c) performed
             // incorrect reference counting. This is a bug on their side. Known mods:
             // - Ancient Warfare 2: problem b). Patched with AncientWarfareNetworkTransformer.
-            payload.release();
+            if (payload.refCnt() > 0) {
+                payload.release();
+            } else {
+                System.err.println("[HBM:FMLNetworkHook.networkDispatcherWrite] Attempted to release payload buffer with refCnt=0");
+            }
         }
     }
 
     public static List<Packet<INetHandlerPlayClient>> fmlProxyPacketToS3FPackets(FMLProxyPacket self) {
         final ByteBuf buf = self.payload();
+
+        // PATCH: prevent crash from refCnt=0
+        if (buf.refCnt() == 0) {
+            System.err.println(
+                    "[HBM:FMLNetworkHook] Dropping packet with refCnt=0\n" +
+                    "  Channel: " + self.channel() + "\n" +
+                    "  Class:   " + self.getClass().getName()
+            );
+            return new ArrayList<>();
+        }
+
         final int len = buf.readableBytes();
         final int ri = buf.readerIndex();
 
