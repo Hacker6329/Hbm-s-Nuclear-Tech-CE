@@ -1,5 +1,6 @@
 package com.hbm.core;
 
+import com.hbm.config.GeneralConfig;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFuture;
@@ -40,16 +41,24 @@ public final class FMLNetworkHook {
             Object o = U.getReference(sp, SP_DATA_OFF);
             if (o != null) {
                 U.putReference(sp, SP_DATA_OFF, null);
-                if (o instanceof ByteBuf buf && buf.refCnt() > 0) {
-                    buf.release();
+                if (GeneralConfig.enableRefCntWorkaround) {
+                    if (o instanceof ByteBuf buf && buf.refCnt() > 0) {
+                        buf.release();
+                    }
+                } else {
+                    ((ByteBuf) o).release();
                 }
             }
         } else if (pkt instanceof CPacketCustomPayload cp) {
             Object o = U.getReference(cp, CP_DATA_OFF);
             if (o != null) {
                 U.putReference(cp, CP_DATA_OFF, null);
-                if (o instanceof ByteBuf buf && buf.refCnt() > 0) {
-                    buf.release();
+                if (GeneralConfig.enableRefCntWorkaround) {
+                    if (o instanceof ByteBuf buf && buf.refCnt() > 0) {
+                        buf.release();
+                    }
+                } else {
+                    ((ByteBuf) o).release();
                 }
             }
         }
@@ -86,10 +95,11 @@ public final class FMLNetworkHook {
             final Side side = (Side) U.getReference(self, SIDE_OFF);
 
             if (side == Side.CLIENT) { // Client -> Server
-                if (!local) {
+                if (GeneralConfig.enableRefCntWorkaround && !local) {
                     bufToUse = payload.retainedDuplicate();
                 }
-                PacketBuffer pb = new PacketBuffer(local ? bufToUse : bufToUse.retainedSlice()); // No need to retain if local
+
+                PacketBuffer pb = new PacketBuffer(GeneralConfig.enableRefCntWorkaround && local ? bufToUse : bufToUse.retainedSlice()); // No need to retain if local
                 CPacketCustomPayload out;
 
                 if (local) {
@@ -107,7 +117,7 @@ public final class FMLNetworkHook {
 
             } else { // Server -> Client
                 if (local) {
-                    PacketBuffer pb = new PacketBuffer(bufToUse); // No need to retain if local
+                    PacketBuffer pb = new PacketBuffer(GeneralConfig.enableRefCntWorkaround ? bufToUse : payload.retainedSlice()); // No need to retain if local
                     SPacketCustomPayload out = createUncheckedSPacket(pkt.channel(), pb);
                     final ChannelFuture f = ctx.write(out, promise);
                     f.addListener((ChannelFutureListener) future -> {
@@ -135,9 +145,11 @@ public final class FMLNetworkHook {
             // incorrect reference counting. This is a bug on their side. Known mods:
             // - Ancient Warfare 2: problem b). Patched with AncientWarfareNetworkTransformer.
             // payload.release();
-            if (!local && bufToUse != payload) {
-                ReferenceCountUtil.safeRelease(bufToUse);
-            }
+            if (GeneralConfig.enableRefCntWorkaround) {
+                if (!local && bufToUse != payload) {
+                    ReferenceCountUtil.safeRelease(bufToUse);
+                }
+            } else payload.release();
         }
     }
 
@@ -150,7 +162,7 @@ public final class FMLNetworkHook {
 
         try {
             if (len < PART_SIZE) {
-                PacketBuffer pb = new PacketBuffer(buf.retainedDuplicate());
+                PacketBuffer pb = new PacketBuffer(GeneralConfig.enableRefCntWorkaround ? buf.retainedDuplicate() : buf.retainedSlice(ri, len));
                 ret.add(new SPacketCustomPayload(self.channel(), pb));
                 return ret;
             }
@@ -169,8 +181,11 @@ public final class FMLNetworkHook {
             for (int x = 0; x < parts; x++) {
                 int dataLen = Math.min(PART_SIZE - 1, len - offset);
 
-                ByteBuf slice = buf.retainedDuplicate();
-                slice.readerIndex(ri + offset).writerIndex(ri + offset + dataLen);
+                ByteBuf slice;
+                if (GeneralConfig.enableRefCntWorkaround) {
+                    slice = buf.retainedDuplicate();
+                    slice.readerIndex(ri + offset).writerIndex(ri + offset + dataLen);
+                } else slice = buf.retainedSlice(ri + offset, dataLen);
 
                 ByteBuf header = Unpooled.buffer(1, 1).writeByte(x & 0xFF);
                 ByteBuf combined = Unpooled.wrappedBuffer(header, slice);
