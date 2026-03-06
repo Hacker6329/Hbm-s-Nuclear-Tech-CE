@@ -65,6 +65,10 @@ public class ModBlocks {
     public static final Block fire_digamma = new DigammaFlame("fire_digamma").setHardness(0.0F).setResistance(150F).setLightLevel(1.0F).setCreativeTab(null);
     public static final Block digamma_matter = new DigammaMatter("digamma_matter").setBlockUnbreakable().setResistance(18000000).setCreativeTab(null);
 
+    //Dummy converter blocks for dumbasses who can't read
+    public static final Block machine_converter_he_rf = new FuckYou(Material.IRON,"machine_converter_he_rf").setHardness(5.0F).setResistance(10.0F).setCreativeTab(MainRegistry.machineTab);
+    public static final Block machine_converter_rf_he = new FuckYou(Material.IRON,"machine_converter_rf_he").setHardness(5.0F).setResistance(10.0F).setCreativeTab(MainRegistry.machineTab);
+
     //Generic blocks
     public static final Block asphalt = new BlockSpeedy(Material.ROCK, "asphalt", 1.5).setCreativeTab(MainRegistry.blockTab).setHardness(15.0F).setResistance(120.0F);
     public static final Block asphalt_light = new BlockSpeedy(Material.ROCK, "asphalt_light", 1.5).setCreativeTab(MainRegistry.blockTab).setLightLevel(1F).setHardness(15.0F).setResistance(120.0F);
@@ -1087,6 +1091,7 @@ public class ModBlocks {
 
     public static final Block machine_excavator = new MachineExcavator(Material.IRON, "machine_excavator").setHardness(5.0F).setResistance(100.0F).setCreativeTab(MainRegistry.machineTab);
     public static final Block machine_ore_slopper = new MachineOreSlopper("machine_ore_slopper").setHardness(5.0F).setResistance(10.0F).setCreativeTab(MainRegistry.machineTab);
+    public static final Block machine_annihilator = new MachineAnnihilator("machine_annihilator").setHardness(5.0F).setResistance(10.0F).setCreativeTab(MainRegistry.machineTab);
     public static final Block machine_mining_laser = new MachineMiningLaser(Material.IRON, "machine_mining_laser").setHardness(5.0F).setResistance(100.0F).setCreativeTab(MainRegistry.machineTab);
     public static final Block sandbags = new BlockSandbags(Material.GROUND, "sandbags").setCreativeTab(MainRegistry.blockTab).setHardness(5.0F).setResistance(30.0F);
 
@@ -1350,6 +1355,7 @@ public class ModBlocks {
     public static final Block radio_torch_sender = new RadioTorchSender("radio_torch_sender").setHardness(0.1F).setResistance(10.0F).setCreativeTab(MainRegistry.machineTab);
     public static final Block radio_torch_receiver = new RadioTorchReceiver("radio_torch_receiver").setHardness(0.1F).setResistance(10.0F).setCreativeTab(MainRegistry.machineTab);
     public static final Block radio_torch_counter = new RadioTorchCounter("radio_torch_counter").setHardness(0.1F).setResistance(10.0F).setCreativeTab(MainRegistry.machineTab);
+    public static final Block radio_torch_logic = new RadioTorchLogic("radio_torch_logic").setHardness(0.1F).setResistance(10.0F).setCreativeTab(MainRegistry.machineTab);
     public static final Block radio_telex = new RadioTelex("radio_telex").setHardness(3F).setResistance(10.0F).setCreativeTab(MainRegistry.machineTab);
 
     //Drillgon200: Removed, by order of lord Bob.
