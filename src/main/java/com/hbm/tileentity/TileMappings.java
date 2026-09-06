@@ -112,9 +112,7 @@ public class TileMappings {
         put(TileEntityLaunchPadRusted.class, "tileentity_launchpad_rusted");
         put(TileEntityLaunchPadLarge.class, "tileentity_launchpad_large");
         put(TileEntityDecoBlock.class, "tileentity_deco");
-//        put(TileEntityDecoBlockAltW.class, "tileentity_deco_w");
-//        put(TileEntityDecoBlockAltG.class, "tileentity_deco_g");
-        put(TileEntityDecoBlockAlt.class, "tileentity_deco_f");
+        put(TileEntityDecoBlockAlt.class, "tileentity_deco_f", "tileentity_deco_g", "tileentity_deco_w");
         put(TileEntityCrashedBomb.class, "tileentity_crashed_balefire");
 //        put(TileEntityConverterHeRf.class, "tileentity_converter_herf");
 //        put(TileEntityConverterRfHe.class, "tileentity_converter_rfhe");
@@ -201,9 +199,6 @@ public class TileMappings {
         put(TileEntityTrappedBrick.class, "tileentity_trapped_brick");
         put(TileEntityWatzStruct.class, "tileentity_watz_struct");
         put(TileEntityICFStruct.class, "tileentity_icf_struct");
-        put(TileEntityHadronDiode.class, "tileentity_hadron_diode");
-        put(TileEntityHadronPower.class, "tileentity_hadron_power");
-        put(TileEntityHadron.class, "tileentity_hadron");
         put(TileEntityPASource.class, "tileentity_pa_source");
         put(TileEntityPABeamline.class, "tileentity_pa_beamline");
         put(TileEntityPARFC.class, "tileentity_pa_rfc");

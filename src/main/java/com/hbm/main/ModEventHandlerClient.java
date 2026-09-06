@@ -1,5 +1,6 @@
 package com.hbm.main;
 
+import net.minecraft.client.renderer.GlStateManager;
 import baubles.api.BaublesApi;
 import com.google.common.collect.Queues;
 import com.hbm.Tags;
@@ -120,6 +121,7 @@ import net.minecraftforge.fml.common.gameevent.TickEvent.RenderTickEvent;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent.ClientDisconnectionFromServerEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.oredict.OreDictionary;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
@@ -392,37 +394,6 @@ public class ModEventHandlerClient {
         }
     }
 
-    //Sus
-    @SubscribeEvent
-    public void onArmorRenderEvent(RenderPlayerEvent.Pre event) {
-        EntityPlayer player = event.getEntityPlayer();
-
-        GlStateManager.pushMatrix();
-        GlStateManager.translate(0, player.isSneaking() ? 1.1 : 1.4, 0);
-        GL11.glRotated(180, 0, 0, 1);
-
-        for (int i = 0; i < 4; i++) {
-
-            ItemStack armor = player.inventory.armorItemInSlot(i);
-
-            if (!armor.isEmpty() && ArmorModHandler.hasMods(armor)) {
-
-                for (ItemStack mod : ArmorModHandler.pryMods(armor)) {
-
-                    if (mod != null && mod.getItem() instanceof ItemArmorMod) {
-                        ((ItemArmorMod) mod.getItem()).modRender(event, armor);
-                    }
-                }
-            }
-
-            //because armor that isn't ItemArmor doesn't render at all
-            if (!armor.isEmpty() && armor.getItem() instanceof JetpackBase) {
-                ((ItemArmorMod) armor.getItem()).modRender(event, armor);
-            }
-        }
-        GlStateManager.popMatrix();
-    }
-
     private boolean isFSBArmor(ItemStack stack) {
         return !stack.isEmpty() && stack.getItem() instanceof ArmorFSB;
     }
@@ -476,9 +447,9 @@ public class ModEventHandlerClient {
 
         //SSG meathook icon projection
         if (ItemGunShotty.rayTrace != null) {
-            GL11.glGetFloat(GL11.GL_MODELVIEW_MATRIX, MODELVIEW);
-            GL11.glGetFloat(GL11.GL_PROJECTION_MATRIX, PROJECTION);
-            GL11.glGetInteger(GL11.GL_VIEWPORT, VIEWPORT);
+            GlStateManager.getFloat(GL11.GL_MODELVIEW_MATRIX, MODELVIEW);
+            GlStateManager.getFloat(GL11.GL_PROJECTION_MATRIX, PROJECTION);
+            GlStateManager.glGetInteger(GL11.GL_VIEWPORT, VIEWPORT);
 
             Project.gluProject((float) (ItemGunShotty.rayTrace.x - d3), (float) (ItemGunShotty.rayTrace.y - d4), (float) (ItemGunShotty.rayTrace.z - d5), MODELVIEW, PROJECTION, VIEWPORT, POSITION);
 
@@ -510,9 +481,9 @@ public class ModEventHandlerClient {
 
             GlStateManager.pushMatrix();
             GlStateManager.translate(ssgChainPos.x, ssgChainPos.y, ssgChainPos.z);
-            GL11.glRotated(yaw + 90, 0, 1, 0);
-            GL11.glRotated(-pitch + 90, 0, 0, 1);
-            GL11.glScaled(0.125, 0.25, 0.125);
+            GlStateManager.rotate((float) (yaw + 90), 0, 1, 0);
+            GlStateManager.rotate((float) (-pitch + 90), 0, 0, 1);
+            GlStateManager.scale(0.125, 0.25, 0.125);
 
             double len = MathHelper.clamp(tester.length() * 2, 0, 40);
             Tessellator tessellator = Tessellator.getInstance();
@@ -556,25 +527,25 @@ public class ModEventHandlerClient {
 
 
             RenderHelper.enableStandardItemLighting();
-            GL11.glRotated(80, 0, 0, 1);
-            GL11.glRotated(30, 0, 1, 0);
+            GlStateManager.rotate(80, 0, 0, 1);
+            GlStateManager.rotate(30, 0, 1, 0);
 
             double sine = Math.sin(Clock.get_ms() * 0.0005) * 5;
             double sin3 = Math.sin(Clock.get_ms() * 0.0005 + Math.PI * 0.5) * 5;
-            GL11.glRotated(sine, 0, 0, 1);
-            GL11.glRotated(sin3, 1, 0, 0);
+            GlStateManager.rotate((float) (sine), 0, 0, 1);
+            GlStateManager.rotate((float) (sin3), 1, 0, 0);
 
             GlStateManager.translate(0, -3, 0);
             OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 6500F, 30F);
             SoyuzPronter.prontCapsule();
 
-            GL11.glRotated(Clock.get_ms() * 0.025 % 360, 0, -1, 0);
+            GlStateManager.rotate((float) (Clock.get_ms() * 0.025 % 360), 0, -1, 0);
 
             int rand = new Random(MainRegistry.startupTime).nextInt(HTTPHandler.capsule.size());
             String msg = HTTPHandler.capsule.get(rand);
 
             GlStateManager.translate(0, 3.75, 0);
-            GL11.glRotated(180, 1, 0, 0);
+            GlStateManager.rotate(180, 1, 0, 0);
 
             float rot = 0F;
 
@@ -641,8 +612,8 @@ public class ModEventHandlerClient {
                         GlStateManager.pushMatrix();
                         GlStateManager.loadIdentity();
 
-                        GL11.glRotated(player.rotationPitch, 1, 0, 0);
-                        GL11.glRotated(player.rotationYaw + 180, 0, 1, 0);
+                        GlStateManager.rotate((float) (player.rotationPitch), 1, 0, 0);
+                        GlStateManager.rotate((float) (player.rotationYaw + 180), 0, 1, 0);
 
                         buf.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION);
                         buf.pos(pos1.x, pos1.y, pos1.z).endVertex();
@@ -875,7 +846,11 @@ public class ModEventHandlerClient {
                 BlockPos pos = mop.getBlockPos();
                 IBlockState stateHit = world.getBlockState(pos);
                 Block blockHit = stateHit.getBlock();
-                if (blockHit instanceof ILookOverlay) {
+                ItemStack held = player.getHeldItemMainhand();
+
+                if (held.getItem() instanceof ILookOverlay) {
+                    ((ILookOverlay) held.getItem()).printHook(event, world, pos);
+                } else if (blockHit instanceof ILookOverlay) {
                     ((ILookOverlay) blockHit).printHook(event, world, pos);
                 }
 
@@ -1477,7 +1452,10 @@ public class ModEventHandlerClient {
         }
 
         try {
-            QuickManualAndWiki qmaw = QMAWLoader.triggers.get(comp);
+            // QMAW triggers are registered as plain ComparableStacks, so an NBT-sensitive key never matches
+            ComparableStack plain = new ComparableStack(stack).makeSingular();
+            QuickManualAndWiki qmaw = QMAWLoader.triggers.get(plain);
+            if (qmaw == null) qmaw = QMAWLoader.triggers.get(new ComparableStack(plain.item, 1, OreDictionary.WILDCARD_VALUE));
             if (qmaw != null) {
                 list.add(TextFormatting.GREEN + I18nUtil.resolveKey("qmaw.tab", Keyboard.getKeyName(HbmKeybinds.qmaw.getKeyCode())));
                 lastQMAW = qmaw;

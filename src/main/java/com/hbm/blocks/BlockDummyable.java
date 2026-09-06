@@ -17,6 +17,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyInteger;
+import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.*;
@@ -92,6 +93,10 @@ public abstract class BlockDummyable extends BlockContainer implements ICustomBl
         ModBlocks.ALL_BLOCKS.add(this);
     }
 
+    @Override
+    public BlockFaceShape getBlockFaceShape(IBlockAccess worldIn, IBlockState state, BlockPos pos, EnumFacing face) {
+        return BlockFaceShape.UNDEFINED;
+    }
 
     protected int getMaxCoreSearchSteps() {
         return 512;
@@ -269,7 +274,7 @@ public abstract class BlockDummyable extends BlockContainer implements ICustomBl
     protected boolean standardOpenBehavior(World world, int x, int y, int z, EntityPlayer player, int id) {
 		
 		if(world.isRemote) {
-			return true;
+			return !player.isSneaking();
 		} else if(!player.isSneaking()) {
 			int[] pos = this.findCore(world, x, y, z);
 
@@ -279,7 +284,7 @@ public abstract class BlockDummyable extends BlockContainer implements ICustomBl
 			player.openGui(MainRegistry.instance, id, world, pos[0], pos[1], pos[2]);
 			return true;
 		} else {
-			return true;
+			return false;
 		}
 	}
 
@@ -515,7 +520,7 @@ public abstract class BlockDummyable extends BlockContainer implements ICustomBl
     }
 
 	@Override
-	public boolean isFullCube(IBlockState state) {
+	public boolean causesSuffocation(IBlockState state) {
 		return false;
 	}
 

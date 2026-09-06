@@ -15,7 +15,7 @@ public class GeneralConfig {
 
 	public static boolean enableFluidContainersV2 = false;
 	public static double conversionRateHeToRF = 1.0F;
-	public static boolean autoCableConversion = false;
+	public static boolean autoCableConversion = true;
 	public static boolean enablePacketThreading = true;
 	public static int packetThreadingCoreCount = 1;
 	public static int packetThreadingMaxCount = 2;
@@ -80,6 +80,7 @@ public class GeneralConfig {
 	public static boolean enableServerRecipeSync = true;
 	public static boolean enableMachineGravity = false;
 	public static boolean enableExpensiveMode = false;
+	public static boolean dynamicTreesCompatMode = false;
 
 	public static boolean trueExp() {
 		return enableExpensiveMode && !PrecAssRecipes.INSTANCE.modified;
@@ -232,7 +233,7 @@ public class GeneralConfig {
 		}
 
 		conversionRateHeToRF = CommonConfig.createConfigDouble(config, CommonConfig.CATEGORY_GENERAL, "1.35_conversionRateHeToRF", "One HE is (insert number) RF - <number> (double)", 1.0D);
-		autoCableConversion = CommonConfig.createConfigBool(config, CommonConfig.CATEGORY_GENERAL, "1.35.1_autoCableConversion", "If enabled, NTM cables will automatically convert FE <-> HE. Note: WILL MAKE ALL OTHER MODS' CABLES USELESS", false);
+		autoCableConversion = CommonConfig.createConfigBool(config, CommonConfig.CATEGORY_GENERAL, "1.35.1_autoCableConversion", "If enabled, NTM cables will automatically convert FE <-> HE. Note: WILL MAKE ALL OTHER MODS' CABLES USELESS", true);
 
 		enableMOTD = config.get(CommonConfig.CATEGORY_GENERAL, "1.36_enableMOTD", true, "If enabled, shows the 'Loaded mod!' chat message as well as update notifications when joining a world").getBoolean(true);
 		enableFluidContainerCompat = config.get(CommonConfig.CATEGORY_GENERAL, "1.37_enableFluidContainerCompat", true, "If enabled, fluid containers will be oredicted and interchangable in recipes with other mods' containers. Should probably work with things like IE's/GC oil properly.").getBoolean(true);
@@ -243,6 +244,7 @@ public class GeneralConfig {
 		enableMachineGravity = config.get(CommonConfig.CATEGORY_GENERAL, "1.44_enableMachineGravity", false, "Requires large large machines to have a proper foundation, or else they tilt and break. Independent from the 528 version of this config, which does the same, but only works with 528 enabled.").getBoolean(false);
 		enableFluidContainersV2 = CommonConfig.createConfigBool(config, CommonConfig.CATEGORY_GENERAL, "1.99_CE_enableFluidContainersV2", "If enabled, 3 new enhanced version of base fluid barrels that supports partial fill and drain are added.", false);
 		leadSafeForgeContainerWhitelist = loadLeadSafeForgeContainerWhitelist(config);
+		dynamicTreesCompatMode = config.get(CommonConfig.CATEGORY_GENERAL, "1.67_dynamicTreesCompatMode", false, "Prevents HBM from reenabling tree, big shroom and cactus generation that was disabled by DynamicTrees").getBoolean(false);
 		enableExpensiveMode = config.get(CommonConfig.CATEGORY_GENERAL, "1.99_enableExpensiveMode", false, "It does what the name implies.").getBoolean(false);
         
 

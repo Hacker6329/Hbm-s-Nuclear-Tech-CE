@@ -34,6 +34,8 @@ public class CompatibilityConfig {
 	public static HashMap<Integer, Integer> alexandriteSpawn;
 	public static HashMap<Integer, Integer> oilBubbleSpawn;
 	public static HashMap<Integer, Integer> cobaltSpawn;
+	public static HashMap<Integer, Integer> gneissIronSpawn;
+	public static HashMap<Integer, Integer> gneissGoldSpawn;
 	
 	public static HashMap<Integer, Integer> ironClusterSpawn;
 	public static HashMap<Integer, Integer> titaniumClusterSpawn;
@@ -76,6 +78,7 @@ public class CompatibilityConfig {
 	public static HashMap<Integer, Integer> siloStructure;
 	public static HashMap<Integer, Integer> factoryStructure;
 	public static HashMap<Integer, Integer> dudStructure;
+	public static HashMap<Integer, Integer> meteoriteSpawn;
 	public static HashMap<Integer, Integer> spaceshipStructure;
 	public static HashMap<Integer, Integer> barrelStructure;
 	public static HashMap<Integer, Integer> geyserChlorine;
@@ -206,6 +209,8 @@ public class CompatibilityConfig {
 		gasbubbleSpawn = CommonConfig.createConfigHashMap(config, CommonConfig.CATEGORY_ORES, "01.19_gasBubbleSpawnRate", "Spawns a gas bubble every nTH chunk - <dimID:amount> (Int:Int)", Integer.class, Integer.class, new String[]{ "0:40", "-6:40" }, ":");
 		cinnabarSpawn = CommonConfig.createConfigHashMap(config, CommonConfig.CATEGORY_ORES, "01.20_cinnabarSpawnRate", "Amount of cinnabar ore veins per chunk - <dimID:amount> (Int:Int)", Integer.class, Integer.class, new String[]{ "0:1", "-6:1" }, ":");
 		cobaltSpawn = CommonConfig.createConfigHashMap(config, CommonConfig.CATEGORY_ORES, "01.21_cobaltSpawnRate", "Amount of cobalt ore veins per chunk - <dimID:amount> (Int:Int)", Integer.class, Integer.class, new String[]{ "0:2", "-6:2" }, ":");
+		gneissIronSpawn = CommonConfig.createConfigHashMap(config, CommonConfig.CATEGORY_ORES, "01.34_gneissIronSpawnrate", "Amount of iron ore veins per chunk in Gneiss - <dimID:amount> (Int:Int)", Integer.class, Integer.class, new String[]{ "0:25" }, ":");
+		gneissGoldSpawn = CommonConfig.createConfigHashMap(config, CommonConfig.CATEGORY_ORES, "01.35_gneissGoldSpawnrate", "Amount of gold ore veins per chunk in Gneiss - <dimID:amount> (Int:Int)", Integer.class, Integer.class, new String[]{ "0:10" }, ":");
 		
 		ironClusterSpawn = CommonConfig.createConfigHashMap(config, CommonConfig.CATEGORY_ORES, "01.22_ironClusterSpawn", "Amount of iron cluster veins per chunk - <dimID:amount> (Int:Int)", Integer.class, Integer.class, new String[]{ "0:4", "-6:4" }, ":");
 		titaniumClusterSpawn = CommonConfig.createConfigHashMap(config, CommonConfig.CATEGORY_ORES, "01.23_titaniumClusterSpawn", "Amount of titanium cluster veins per chunk - <dimID:amount> (Int:Int)", Integer.class, Integer.class, new String[]{ "0:2", "-6:2" }, ":");
@@ -255,6 +260,7 @@ public class CompatibilityConfig {
 		minefreq = CommonConfig.createConfigHashMap(config, CommonConfig.CATEGORY_STRUCTURES, "03.15_landmineSpawn", "Spawn AP landmine on every nTH chunk - <dimID:n> (Int:Int)", Integer.class, Integer.class, new String[]{ "0:64" }, ":");
 		radfreq = CommonConfig.createConfigHashMap(config, CommonConfig.CATEGORY_STRUCTURES, "03.17_radHotsoptSpawn", "Spawn big radiation hotspot on every nTH chunk - <dimID:n> (Int:Int)", Integer.class, Integer.class, new String[]{ "0:5000" }, ":");
 		vaultfreq = CommonConfig.createConfigHashMap(config, CommonConfig.CATEGORY_STRUCTURES, "03.18_vaultSpawn", "Spawn locked safe on every nTH chunk - <dimID:n> (Int:Int)", Integer.class, Integer.class, new String[]{ "0:2500" }, ":");
+		meteoriteSpawn = CommonConfig.createConfigHashMap(config, CommonConfig.CATEGORY_STRUCTURES, "03.19_meteoriteSpawn", "Spawn a fallen meteorite on every nTH chunk - <dimID:n> (Int:Int)", Integer.class, Integer.class, new String[]{ "0:200" }, ":");
 		
 		geyserChlorine = CommonConfig.createConfigHashMap(config, CommonConfig.CATEGORY_STRUCTURES, "03.20_geyserChlorineSpawn", "Spawn poison geyser on every nTH chunk - <dimID:n> (Int:Int)", Integer.class, Integer.class, new String[]{ "0:3000" }, ":");
 		geyserVapor = CommonConfig.createConfigHashMap(config, CommonConfig.CATEGORY_STRUCTURES, "03.21_geyserVaporSpawn", "Spawn vapor geyser on every nTH chunk - <dimID:n> (Int:Int)", Integer.class, Integer.class, new String[]{ "0:500" }, ":");
